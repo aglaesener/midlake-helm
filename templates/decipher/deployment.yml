@@ -1,0 +1,56 @@
+{{- if .Values.decipher.deploy }}
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  labels:
+    app: decipher
+    app.kubernetes.io/component: decipher
+    app.kubernetes.io/name: decipher
+    app.kubernetes.io/part-of: midlake
+    app.kubernetes.io/version: m1
+  name: decipher
+  namespace: {{ .Release.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: decipher
+      app.kubernetes.io/component: decipher
+      app.kubernetes.io/name: decipher
+      app.kubernetes.io/part-of: midlake
+      app.kubernetes.io/version: m1
+  template:
+    metadata:
+      labels:
+        app: decipher
+        app.kubernetes.io/component: decipher
+        app.kubernetes.io/name: decipher
+        app.kubernetes.io/part-of: midlake
+        app.kubernetes.io/version: m1
+    spec:
+      containers:
+        - image: deciphermodule:{{ .Values.decipher.image.tag }}
+          imagePullPolicy: {{ .Values.decipher.image.pullPolicy }}
+          name: decipher
+          envFrom:
+            - configMapRef:
+                name: ld-library-config
+          ports:
+            - containerPort: 8080
+              name: http
+          volumeMounts:
+            - mountPath: /usr/src/app/config/application.properties
+              name: spring-boot-config
+              readOnly: true
+              subPath: application.properties
+            - mountPath: /usr/lib/softhsm
+              name: softhsm
+      volumes:
+        - name: spring-boot-config
+          secret:
+            secretName: decipher-spring-boot-config
+        - name: softhsm
+          hostPath:
+            path: /usr/lib/softhsm
+            type: Directory
+{{- end }}

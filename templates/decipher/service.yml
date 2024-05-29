@@ -1,0 +1,24 @@
+{{- if .Values.decipher.deploy }}
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: decipher
+    app.kubernetes.io/component: decipher
+    app.kubernetes.io/name: decipher
+    app.kubernetes.io/part-of: decipher
+    app.kubernetes.io/version: m1
+  name: decipher
+  namespace: {{ .Release.namespace }}
+spec:
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: decipher
+    app.kubernetes.io/component: decipher
+    app.kubernetes.io/name: decipher
+    app.kubernetes.io/part-of: midlake
+    app.kubernetes.io/version: m1
+{{- end }}

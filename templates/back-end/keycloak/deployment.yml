@@ -1,0 +1,50 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  labels:
+    app: keycloak
+    app.kubernetes.io/component: keycloak
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/part-of: midlake
+    app.kubernetes.io/version: m1
+  name: keycloak
+  namespace: {{ .Release.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keycloak
+      app.kubernetes.io/component: keycloak
+      app.kubernetes.io/name: keycloak
+      app.kubernetes.io/part-of: midlake
+      app.kubernetes.io/version: m1
+  template:
+    metadata:
+      labels:
+        app: keycloak
+        app.kubernetes.io/component: keycloak
+        app.kubernetes.io/name: keycloak
+        app.kubernetes.io/part-of: midlake
+        app.kubernetes.io/version: m1
+    spec:
+      volumes:
+        - name: keycloak-realm-config
+          secret:
+            secretName: keycloak-realm-config
+      containers:
+        - envFrom:
+            - configMapRef:
+                name: keycloak-config
+          image: tgi-docker-registry.openshift.techgap.it/tech-gap-italia/midlake-aibibank/keycloak-docker-quickstart:{{ .Values.keyCloak.image.tag }}
+          imagePullPolicy: {{ .Values.keyCloak.image.pullPolicy }}
+          name: keycloak
+          volumeMounts:
+            - mountPath: /tmp/realm.json
+              name: keycloak-realm-config
+              readOnly: true
+              subPath: realm.json
+          ports:
+            - containerPort: 8080
+              name: http
+      imagePullSecrets:
+        - name: deploy-token

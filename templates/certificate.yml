@@ -1,0 +1,16 @@
+kind: Certificate
+apiVersion: cert-manager.io/v1
+metadata:
+  labels:
+    app.kubernetes.io/part-of: midlake
+    app.kubernetes.io/version: m1
+  name: midlake-certificate
+  namespace: {{ .Release.namespace }}
+spec:
+  commonName: {{ .Values.hostname }}
+  dnsNames:
+    - {{ .Values.hostname }}
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-prod
+  secretName: midlake-certificate-tls

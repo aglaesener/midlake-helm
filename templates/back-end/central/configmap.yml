@@ -1,0 +1,33 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  labels:
+    app.kubernetes.io/part-of: midlake
+    app.kubernetes.io/version: m1
+  name: central-config
+  namespace: {{ .Release.namespace }}
+data:
+  CCYBERNEID_ANONYMIZE_RSA_PATIENTPUBLICKEY:
+    {{ .Values.anonymization.localKeys.rsa.patient.value }}
+  CYBERNEID_ANONYMIZE_RSA_PATIENTPUBLICKEYLABEL:
+    {{ .Values.anonymization.localKeys.rsa.patient.label }}
+  CYBERNEID_ANONYMIZE_RSA_PROVENANCEPUBLICKEY:
+    {{ .Values.anonymization.localKeys.rsa.provenance.value }}
+  CYBERNEID_ANONYMIZE_RSA_PROVENANCEPUBLICKEYLABEL: 
+    {{ .Values.anonymization.localKeys.rsa.provenance.label }}
+  CYBERNEID_ANONYMIZE_HSM_PIN: {{ .Values.anonymization.hsm.pin | quote }}
+  CYBERNEID_ANONYMIZE_HSM_PKCS11PATH:
+    {{ .Values.anonymization.hsm.soFullPath }}
+  CYBERNEID_ANONYMIZE_HMAC_PATIENTSEEDLABEL:
+    {{ .Values.anonymization.hsm.keys.hmacSeed.patient.label }}
+  CYBERNEID_ANONYMIZE_HMAC_PROVENANCESEEDLABEL:
+    {{ .Values.anonymization.hsm.keys.hmacSeed.provenance.label }}
+  CYBERNEID_ANONYMIZE_RSA_CLINICALDATAPUBLICKEYLABEL:
+    {{ .Values.anonymization.hsm.keys.rsa.clinicalData.label }}
+  DATALAKE_URL: {{ .Values.datalake.url }}
+  DATALAKE_SECURITY_BASICAUTH_USERNAME: {{ .Values.datalake.username }}
+  DATALAKE_SECURITY_BASICAUTH_PASSWORD: {{ .Values.datalake.password }}
+  JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8081
+  SERVER_PORT: "8080"
+  SERVER_SERVLET_CONTEXT_PATH: /central
+  SOFTHSM2_CONF: {{ .Values.anonymization.hsm.confFullPath }}

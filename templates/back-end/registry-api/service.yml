@@ -1,0 +1,23 @@
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: registry-api
+    app.kubernetes.io/component: registry-api
+    app.kubernetes.io/name: registry-api
+    app.kubernetes.io/part-of: midlake
+    app.kubernetes.io/version: m1
+  name: registry-api
+  namespace: {{ .Release.namespace }}
+spec:
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+  selector:
+    app: registry-api
+    app.kubernetes.io/component: registry-api
+    app.kubernetes.io/name: registry-api
+    app.kubernetes.io/part-of: midlake
+    app.kubernetes.io/version: m1
+  type: ClusterIP

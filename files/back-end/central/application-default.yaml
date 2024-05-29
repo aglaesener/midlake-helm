@@ -1,0 +1,14 @@
+# spring
+spring:
+  main:
+    banner-mode: log
+
+# logging
+logging:
+  file.name: /midlake/logs/midlake-central.log
+  pattern:
+    console: ""
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} %clr(%-5p) %-25t{25} %blue(%-45logger{45}) %m%n%wEx"
+  level:
+    it.tgi.sazai: DEBUG
+    org.springframework.web: INFO

@@ -1,0 +1,55 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  labels:
+    app: mock-extractor
+    app.kubernetes.io/component: mock-extractor
+    app.kubernetes.io/name: mock-extractor
+    app.kubernetes.io/part-of: midlake
+    app.kubernetes.io/version: m1
+  name: mock-extractor
+  namespace: {{ .Release.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mock-extractor
+      app.kubernetes.io/component: mock-extractor
+      app.kubernetes.io/name: mock-extractor
+      app.kubernetes.io/part-of: midlake
+      app.kubernetes.io/version: m1
+  template:
+    metadata:
+      labels:
+        app: mock-extractor
+        app.kubernetes.io/component: mock-extractor
+        app.kubernetes.io/name: mock-extractor
+        app.kubernetes.io/part-of: midlake
+        app.kubernetes.io/version: m1
+    spec:
+      containers:
+        - envFrom:
+            - configMapRef:
+                name: mock-extractor-config
+          image: tgi-docker-registry.openshift.techgap.it/tech-gap-italia/midlake-aibibank/midlake-mock-extractor:{{ .Values.mockExtractor.image.tag }}
+          imagePullPolicy: {{ .Values.mockExtractor.image.pullPolicy }}
+          name: mock-extractor
+          ports:
+            - containerPort: 8080
+              name: http
+          volumeMounts:
+            - mountPath: /config
+              name: spring-config
+              readOnly: true
+            - mountPath: /midlake/logs
+              name: logs
+      imagePullSecrets:
+        - name: deploy-token
+      volumes:
+        - name: spring-config
+          secret:
+            secretName: mock-extractor-spring-config
+        - hostPath:
+            path: /midlake/logs
+            type: DirectoryOrCreate
+          name: logs

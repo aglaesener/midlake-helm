@@ -1,0 +1,8 @@
+{
+  "auths": {
+    "tgi-docker-registry.openshift.techgap.it": {
+      "username": "admin",
+      "password": "itsasecret"
+    }
+  }
+}

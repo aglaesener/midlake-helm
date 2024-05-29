@@ -1,0 +1,26 @@
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: rabbitmq
+    app.kubernetes.io/component: queue
+    app.kubernetes.io/name: rabbitmq
+    app.kubernetes.io/part-of: midlake
+    app.kubernetes.io/version: m1
+  name: rabbitmq
+  namespace: {{ .Release.namespace }}
+spec:
+  ports:
+    - name: tcp-queue
+      port: 5672
+      targetPort: tcp-queue
+    - name: http-management
+      port: 15672
+      targetPort: http-management
+  selector:
+    app: rabbitmq
+    app.kubernetes.io/component: queue
+    app.kubernetes.io/name: rabbitmq
+    app.kubernetes.io/part-of: midlake
+    app.kubernetes.io/version: m1
+  type: ClusterIP

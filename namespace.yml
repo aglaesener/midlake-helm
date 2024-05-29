@@ -1,0 +1,7 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  labels:
+    app.kubernetes.io/part-of: midlake
+    app.kubernetes.io/version: m1
+  name: midlake-dev

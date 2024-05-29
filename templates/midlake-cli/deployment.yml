@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+   name: midlake-cli
+   namespace: {{ .Release.namespace }}
+   labels:
+      app: midlake-cli
+spec:
+   selector:
+      matchLabels:
+         app: midlake-cli
+   template:
+      metadata:
+         labels:
+            app: midlake-cli
+      spec:
+         containers:
+            - name: midlake-cli
+              image: andreaglaesener/midlake-cli:{{ .Values.midlakeCli.image.tag }}
+              imagePullPolicy: {{ .Values.midlakeCli.image.pullPolicy }}
+              command: ["tail", "-f", "/dev/null"]
+              env:
+                 - name: MIDLAKE_HOST
+                   value: {{ .Values.baseUrl }}
+              volumeMounts:
+                 - name: midlake-conf
+                   mountPath: /midlake/conf
+         volumes:
+            - name: midlake-conf
+              hostPath:
+                 path: /midlake/conf
+         dnsConfig:
+            nameservers:
+               - 1.1.1.1
+               - 8.8.8.8
+         hostAliases:
+            - ip: {{ .Values.hostIp }}
+              hostnames:
+                 - {{ .Values.hostname }}
+         imagePullSecrets:
+            - name: deploy-token-dockerhub
+

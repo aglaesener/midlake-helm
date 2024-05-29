@@ -1,0 +1,95 @@
+{
+   "log": {
+      "folder": "/midlake/logs",
+      "name": "midlake-registry-api.log"
+   },
+   "express": {
+      "port": 3000,
+      "basePath": "/registry-api",
+      "folder": "./src/controller",
+      "suffix": "Controller.js",
+      "pathFolder": "../../controller/",
+      "singular": ["Auth"]
+   },
+   "swagger": {
+      "swaggerDefinition": {
+         "openapi": "3.0.0",
+         "info": {
+            "title": "Midlake Registry API",
+            "description": "Midlake Registry API Documentation"
+         },
+         "servers": [
+            {
+               "url": "{{ .Values.baseUrl }}/registry-api",
+               "description": "development server"
+            }
+         ],
+         "components": {
+            "securitySchemes": {
+               "bearerAuth": {
+                  "description": "The JWT token into the Bearer header",
+                  "type": "apiKey",
+                  "name": "Authorization",
+                  "in": "header"
+               }
+            }
+         },
+         "apiDocs": "/api-docs"
+      },
+      "apis": ["./src/controller/*Controller.js"],
+      "options": {
+         "explorer": true
+      }
+   },
+   "security": {
+      "type": "KEYCLOAK",
+      "jwt": {
+         "secret": "secret",
+         "expiresIn": "7d"
+      },
+      "keycloak": {
+         "auth-server-url": "{{ .Values.baseUrl }}/auth/",
+         "realm": "{{ .Values.registryApi.keycloak.realm }}",
+         "resource": "midlake-registry-api",
+         "ssl-required": "external",
+         "public-client": true,
+         "confidential-port": 0
+      }
+   },
+   "db": {
+      "host": "{{ .Values.registryApi.orientdb.host }}",
+      "port": "{{ .Values.registryApi.orientdb.port }}",
+      "username": "{{ .Values.registryApi.orientdb.username }}",
+      "password": "{{ .Values.registryApi.orientdb.password }}",
+      "name": "{{ .Values.registryApi.orientdb.name }}"
+   },
+   "scheduler": [
+      {
+         "name": "complete expired ProjectUnits",
+         "cron": "0 0 * * *",
+         "taskClass": "../../service/ProjectUnitService",
+         "taskMethod": "completeExpired"
+      }
+   ],
+   "csv": {
+      "tmpDir": "/tmp/midlake/csv/",
+      "samplePatient": {
+         "firstName": "Mario",
+         "lastName": "Rossi",
+         "fiscalCode": "XXXXXXXXXXXXXXXX",
+         "sex": "M",
+         "birthDate": "01/01/1970",
+         "consentFrom": "01/01/2019",
+         "consentTo": "31/12/2022"
+      }
+   },
+   "midlakeApplicationApi": {
+      "definition": "./src/client/midlake-application-api.yaml",
+      "server": "{{ .Values.baseUrl }}/application"
+   },
+   "file": {
+      "upload": {
+         "dir": "/midlake/file/"
+      }
+   }
+}

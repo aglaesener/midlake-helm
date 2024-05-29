@@ -1,0 +1,16 @@
+{{- if .Values.mockAcquire.deploy }}
+apiVersion: v1
+kind: Service
+metadata:
+    name: mock-acquire-db
+    namespace: {{ .Release.namespace }}
+    labels:
+        app: mock-acquire-db
+spec:
+    selector:
+        app: mock-acquire-db
+    ports:
+        - protocol: TCP
+          port: 5433
+          targetPort: 5432
+{{- end }}

@@ -1,0 +1,23 @@
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: application
+    app.kubernetes.io/component: application
+    app.kubernetes.io/name: application
+    app.kubernetes.io/part-of: midlake
+    app.kubernetes.io/version: m1
+  name: application
+  namespace: {{ .Release.namespace }}
+spec:
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+  selector:
+    app: application
+    app.kubernetes.io/component: application
+    app.kubernetes.io/name: application
+    app.kubernetes.io/part-of: midlake
+    app.kubernetes.io/version: m1
+  type: ClusterIP

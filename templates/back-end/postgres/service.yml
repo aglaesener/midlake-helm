@@ -1,0 +1,23 @@
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: postgres
+    app.kubernetes.io/component: db
+    app.kubernetes.io/name: postgres
+    app.kubernetes.io/part-of: midlake
+    app.kubernetes.io/version: m1
+  name: postgres
+  namespace: {{ .Release.namespace }}
+spec:
+  ports:
+    - name: tcp-postgres
+      port: 5432
+      targetPort: tcp-postgres
+  selector:
+    app: postgres
+    app.kubernetes.io/component: db
+    app.kubernetes.io/name: postgres
+    app.kubernetes.io/part-of: midlake
+    app.kubernetes.io/version: m1
+  type: ClusterIP

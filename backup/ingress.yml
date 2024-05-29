@@ -1,0 +1,34 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+    annotations:
+        acme.cert-manager.io/http01-edit-in-place: 'true'
+        kubernetes.io/ingress.class: public
+        kubernetes.io/tls-acme: 'true'
+        nginx.ingress.kubernetes.io/proxy-body-size: 0m
+    labels:
+        app.kubernetes.io/part-of: midlake
+        app.kubernetes.io/version: m1
+    name: mock-acquire-ingress
+    namespace: {{ .Release.namespace }}
+    selfLink: /apis/networking.k8s.io/v1/namespaces/{{ .Release.namespace }}/ingresses/mock-acquire-ingress
+spec:
+    rules:
+        - host: {{ .Values.hostname }}
+          http:
+              paths:
+                  - path: /mock-acquire(/|$)(.*)
+                    pathType: Prefix
+                    backend:
+                        service:
+                            name: mock-acquire-api
+                            port:
+                                number: 5005
+    tls:
+        - hosts:
+              - {{ .Values.hostname }}
+          secretName: midlake-certificate-tls
+status:
+    loadBalancer:
+        ingress:
+            - ip: 127.0.0.1

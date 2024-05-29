@@ -1,0 +1,67 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  labels:
+    app: central
+    app.kubernetes.io/component: central
+    app.kubernetes.io/name: central
+    app.kubernetes.io/part-of: midlake
+    app.kubernetes.io/version: m1
+  name: central
+  namespace: {{ .Release.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: central
+      app.kubernetes.io/component: central
+      app.kubernetes.io/name: central
+      app.kubernetes.io/part-of: midlake
+      app.kubernetes.io/version: m1
+  template:
+    metadata:
+      labels:
+        app: central
+        app.kubernetes.io/component: central
+        app.kubernetes.io/name: central
+        app.kubernetes.io/part-of: midlake
+        app.kubernetes.io/version: m1
+    spec:
+      containers:
+        - envFrom:
+            - configMapRef:
+                name: central-config
+          image: tgi-docker-registry.openshift.techgap.it/tech-gap-italia/midlake-aibibank/midlake-central:{{ .Values.central.image.tag }}
+          imagePullPolicy: {{ .Values.central.image.pullPolicy }}
+          name: central
+          ports:
+            - containerPort: 8080
+              name: http
+          volumeMounts:
+            - mountPath: /config
+              name: spring-config
+              readOnly: true
+            - mountPath: /midlake/logs
+              name: logs
+            - mountPath: /usr/lib/softhsm
+              name: softhsm
+            - mountPath: /home/techgap
+              name: techgap
+      imagePullSecrets:
+        - name: deploy-token
+      volumes:
+        - name: spring-config
+          secret:
+            secretName: central-spring-config
+        - hostPath:
+            path: /midlake/logs
+            type: DirectoryOrCreate
+          name: logs
+        - hostPath:
+            path: /usr/lib/softhsm
+            type: Directory
+          name: softhsm
+        - hostPath:
+            path: /home/techgap
+            type: Directory
+          name: techgap

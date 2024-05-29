@@ -1,0 +1,26 @@
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: orientdb
+    app.kubernetes.io/component: db
+    app.kubernetes.io/name: orientdb
+    app.kubernetes.io/part-of: midlake
+    app.kubernetes.io/version: m1
+  name: orientdb
+  namespace: {{ .Release.namespace }}
+spec:
+  ports:
+    - name: tcp-db
+      port: 2424
+      targetPort: tcp-db
+    - name: http-management
+      port: 2480
+      targetPort: http-management
+  selector:
+    app: orientdb
+    app.kubernetes.io/component: db
+    app.kubernetes.io/name: orientdb
+    app.kubernetes.io/part-of: midlake
+    app.kubernetes.io/version: m1
+  type: ClusterIP

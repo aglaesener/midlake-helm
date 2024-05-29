@@ -1,0 +1,16 @@
+{{- if .Values.mockAcquire.deploy }}
+apiVersion: v1
+kind: Service
+metadata:
+    name: mock-acquire-api
+    namespace: {{ .Release.namespace }}
+    labels:
+        app: mock-acquire-api
+spec:
+    selector:
+        app: mock-acquire-api
+    ports:
+        - protocol: TCP
+          port: 5005
+          targetPort: 5005
+{{- end }}

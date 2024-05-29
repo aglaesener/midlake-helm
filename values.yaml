@@ -1,0 +1,108 @@
+hostname: midlake.devel.medas-solutions.it
+baseUrl: https://midlake.devel.medas-solutions.it
+hostIp: 192.168.1.97
+home: /home/medas
+
+anonymization:
+  localKeys:
+    aes:
+      value: mM+Z/pVxy8mp+ZQ3RQyltZ4WQ4J89cWbyKrGhkqHafM=
+    rsa:
+      patient:
+        label: RsaPatientPublicKey
+        value: MIICCgKCAgEAlr+kgIVFa3TfAUvkUnI6n+imxU9OKpX6/uRCwi0COirA8ZtpAyvTGQT06HqbyoEZnizk0TB6nFvWIr1BDT06voog7T3ZkQfIIPgKwM3Tc+kN59vcpU8k2wyGWWvVurtsRmTfZCxKNEIzZ1zC55ySRU66uQYa9zDBhT7Lz2J25bynQOQwHbHXUEbrziUWU2G+Kt3dKf2JXe7x6Jl7zP0gw26F2AmOS7xuGY8xwb7qJHlPX+16gNj8ksgnpQs70tU+Vq84WB19393vMHTmDv8A+fg7Oj/FhLHwvyERcBpjR7IbmSqVP7PKj8IMy2WB94Lj3322IfHRD2op8Vxb4z/JodhM1dLwvZru7xAeJ4KjKmQFsGf+Gy8jlUf+14DT+RiprWDFwOMzIGsLHha/iknj4im4XkG3UjT66hB24XA3LVrv71AW9Xbm51irxZAI+S1gu+2uR9hbCG9zoKxUH3CXrwCbOb4ol85fOkmJgIeHnPP4a+i45V/5gUqcQU53laO0icN989dYv9/6EkOs+gHemDKXQ135gw5CrF8UWHt/B7S7vhbXPnJ6SWend573yU9nWuwnPpSluP/6eTrZkkEM/OeNEmknQrMSM92zeeceU3zYla/8AbQKhNoqFT2YKoIEWohbpjfYYkr71l02Ih6a3VZvS5MA+9hgVKBe8bl2818CAwEAAQ==
+      provenance:
+        label: RsaProvenancePublicKey
+        value: MIICCgKCAgEA5lxkVFVD13adTEOaO5B5xdAVEILbfVCWfhmnG2RsDiqs9OWO/hgsFT+lGhCBLB73ZeHAHV6pCuic9HAOZvOxVa5djoh+YTAxESXFEdobi7Pq1Hcc4opZqvi5NZ5+3q2p+HUKsA735HnMIfvOtNSKRg+hU34SWaKYUtOaYEbnrXrBQiSPvurGZvzC4sH+Og9sOZFSjk1lc73Np9B95UNJ4mEFZsut8wJBjMJmkc4veguES4PHJlrQybwEkLPWGYzfWHjtt+AQhhB+8SaYRJjA34uEdJiVd+6oAbk2bRoLCecDsgGimIcGZgrSep+Tin81+DmZZ6b3x7RV3NDyJDRcYlW3zWU+NsMzpgTDZb87dkUAR31bogCbxU6/mqj8v32OHnR0X6UtcGWj+K/vZRO3BehDUNjB8bvjmRPeaa0FAArxHrw3nNlIRA4avY0lV6JW9HPLmjTWbPGKDb3MG0vBaIY1n3F29KaWsqRDc+gkC5bZvZWCqF9jM/f4Hm88erp3Gxl3Zo3Rm1bC1QDWOGTfOw/31M2sdpLwFbpefCTAm+z8FEzf2R5qLQ9TYFDUB1jhBwrbCq8NV/pZal11aC/Sx4neXaS09atmWX9ZhQCVxvBZbYrfUVA5ibRPVzIWNDbEjDMDLUewiFRMmDVNAAExiO8QMCytX+GHf2ClzcCPbqcCAwEAAQ==
+  hsm:
+    pin: 1234
+    soFullPath: /usr/lib/softhsm/libsofthsm2.so
+    soDirectory: /usr/lib/softhsm
+    confFullPath: /home/medas/lib/softhsm/softhsm2.conf
+    keys:
+      hmacSeed:
+        patient:
+          label: HmacPatientLabel
+        provenance:
+          label: HmacProvenanceLabel
+      rsa:
+        clinicalData:
+          label: RsaClinicalDataLabel
+
+orientdb:
+  name: midlake
+  password: rootpwd
+
+keyCloak:
+  image:
+    tag: "develop"
+    pullPolicy: IfNotPresent
+  username: admin
+  password: medas$2024
+
+dlb:
+  username: midlake
+  password: mid1ak3!
+
+application:
+  image:
+    tag: "develop"
+    pullPolicy: IfNotPresent
+      
+central:
+  image:
+    tag: "develop"
+    pullPolicy: IfNotPresent
+
+registryApi:
+  orientdb:
+    host: orientdb
+    port: 2424
+    name: midlake
+    username: root
+    password: rootpwd
+    name: midlake
+  keycloak:
+    realm: midlake
+  image:
+    tag: "develop"
+    pullPolicy: IfNotPresent
+
+mockExtractor:
+  image:
+    tag: "develop"
+    pullPolicy: IfNotPresent
+
+midlakeCli:
+  image:
+    tag: "1.1"
+    pullPolicy: IfNotPresent
+
+mockAcquire:
+  deploy: true
+  db:
+    image:
+      tag: "1.2"
+      pullPolicy: IfNotPresent
+  api:
+    image:
+      tag: "1.1.1"
+      pullPolicy: IfNotPresent
+
+frontEnd:
+  image:
+    tag: "1.0"
+    pullPolicy: IfNotPresent
+  dashboardUrl: "https://a1oo1032wu7dnw0.eu.qlikcloud.com/single/?appid=f13e04ee-308b-4965-9e3b-c2b565bac895&sheet=bcbcb0ba-9a62-4e6b-98b0-72f7cdb39827&opt=ctxmenu,currsel&select=$::diagnosis,B,M&identity=preview"
+
+decipher:
+  deploy: true
+  image:
+    tag: "latest"
+    pullPolicy: IfNotPresent
+  authKey: "12345678"
+
+datalake:
+  url: http://192.168.1.97:5000
+  username: lakeuser
+  password: sys

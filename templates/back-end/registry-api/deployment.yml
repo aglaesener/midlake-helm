@@ -1,0 +1,66 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  labels:
+    app: registry-api
+    app.kubernetes.io/component: registry-api
+    app.kubernetes.io/name: registry-api
+    app.kubernetes.io/part-of: midlake
+    app.kubernetes.io/version: m1
+  name: registry-api
+  namespace: {{ .Release.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: registry-api
+      app.kubernetes.io/component: registry-api
+      app.kubernetes.io/name: registry-api
+      app.kubernetes.io/part-of: midlake
+      app.kubernetes.io/version: m1
+  template:
+    metadata:
+      labels:
+        app: registry-api
+        app.kubernetes.io/component: registry-api
+        app.kubernetes.io/name: registry-api
+        app.kubernetes.io/part-of: midlake
+        app.kubernetes.io/version: m1
+    spec:
+      containers:
+        - envFrom:
+            - configMapRef:
+                name: registry-api-config
+          image: tgi-docker-registry.openshift.techgap.it/tech-gap-italia/midlake-aibibank/midlake-registry-api:{{ .Values.registryApi.image.tag }}
+          imagePullPolicy: {{ .Values.registryApi.image.pullPolicy }}
+          name: registry-api
+          ports:
+            - containerPort: 3000
+              name: http
+          volumeMounts:
+            - mountPath: /usr/src/app/src/config/config.json
+              name: registry-api-node-config
+              readOnly: true
+              subPath: config.json
+            - mountPath: /midlake/logs
+              name: logs
+            - mountPath: /midlake/file
+              name: file
+      hostAliases:
+        - hostnames:
+            - {{ .Values.hostname }}
+          ip: {{ .Values.hostIp }}
+      imagePullSecrets:
+        - name: deploy-token
+      volumes:
+        - name: registry-api-node-config
+          secret:
+            secretName: registry-api-node-config
+        - hostPath:
+            path: /midlake/logs
+            type: DirectoryOrCreate
+          name: logs
+        - hostPath:
+            path: /midlake/file
+            type: DirectoryOrCreate
+          name: file

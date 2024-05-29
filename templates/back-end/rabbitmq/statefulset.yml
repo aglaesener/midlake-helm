@@ -1,0 +1,56 @@
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  labels:
+    app: rabbitmq
+    app.kubernetes.io/component: queue
+    app.kubernetes.io/name: rabbitmq
+    app.kubernetes.io/part-of: midlake
+    app.kubernetes.io/version: m1
+  name: rabbitmq
+  namespace: {{ .Release.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabbitmq
+      app.kubernetes.io/component: queue
+      app.kubernetes.io/name: rabbitmq
+      app.kubernetes.io/part-of: midlake
+      app.kubernetes.io/version: m1
+  serviceName: rabbitmq
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+        app.kubernetes.io/component: queue
+        app.kubernetes.io/name: rabbitmq
+        app.kubernetes.io/part-of: midlake
+        app.kubernetes.io/version: m1
+    spec:
+      containers:
+        - image: rabbitmq:management
+          name: rabbitmq
+          ports:
+            - containerPort: 5672
+              name: tcp-queue
+            - containerPort: 15672
+              name: http-management
+          volumeMounts:
+            - mountPath: /var/lib/rabbitmq
+              name: data
+  volumeClaimTemplates:
+    - metadata:
+        labels:
+          app: rabbitmq
+          app.kubernetes.io/component: queue
+          app.kubernetes.io/name: rabbitmq
+          app.kubernetes.io/part-of: midlake
+          app.kubernetes.io/version: m1
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 2Gi

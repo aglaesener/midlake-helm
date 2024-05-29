@@ -1,0 +1,26 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  labels:
+    app.kubernetes.io/part-of: midlake
+    app.kubernetes.io/version: m1
+  name: application-config
+  namespace: {{ .Release.namespace }}
+data:
+  CYBERNEID_ANONYMIZE_AES_KEY: {{ .Values.anonymization.localKeys.aes.value }}
+  CYBERNEID_ANONYMIZE_RSA_PATIENTPUBLICKEY: {{ .Values.anonymization.localKeys.rsa.patient.value }}
+  CYBERNEID_ANONYMIZE_RSA_PROVENANCEPUBLICKEY: {{ .Values.anonymization.localKeys.rsa.provenance.value }}
+  CYBERNEID_ANONYMIZE_HSM_PIN: {{ .Values.anonymization.hsm.pin | quote }}
+  CYBERNEID_ANONYMIZE_HSM_PKCS11PATH: {{ .Values.anonymization.hsm.soFullPath }}
+  CYBERNEID_ANONYMIZE_HMAC_PATIENTSEEDLABEL: {{ .Values.anonymization.hsm.keys.hmacSeed.patient.label }}
+  CYBERNEID_ANONYMIZE_HMAC_PROVENANCESEEDLABEL: {{ .Values.anonymization.hsm.keys.hmacSeed.provenance.label }}
+  DLB_CREDENTIALS_USER: {{ .Values.dlb.username }}
+  DLB_CREDENTIALS_PWD: {{ .Values.dlb.password }}
+  JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8081
+  REGISTRY_LOGLEVEL: BASIC
+  REGISTRY_URL: {{ .Values.baseUrl }}/registry-api
+  SERVER_PORT: "8080"
+  SERVER_SERVLET_CONTEXT_PATH: /application
+  SOFTHSM2_CONF: {{ .Values.anonymization.hsm.confFullPath }}
+  SPRING_RABBITMQ_HOST: rabbitmq
+  SPRING_RABBITMQ_PORT: "5672"

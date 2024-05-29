@@ -1,0 +1,58 @@
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  labels:
+    app: postgres
+    app.kubernetes.io/component: db
+    app.kubernetes.io/name: postgres
+    app.kubernetes.io/part-of: midlake
+    app.kubernetes.io/version: m1
+  name: postgres
+  namespace: {{ .Release.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+      app.kubernetes.io/component: db
+      app.kubernetes.io/name: postgres
+      app.kubernetes.io/part-of: midlake
+      app.kubernetes.io/version: m1
+  serviceName: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+        app.kubernetes.io/component: db
+        app.kubernetes.io/name: postgres
+        app.kubernetes.io/part-of: midlake
+        app.kubernetes.io/version: m1
+    spec:
+      containers:
+        - envFrom:
+            - configMapRef:
+                name: postgres-config
+          image: postgres:12.2
+          name: postgres
+          ports:
+            - containerPort: 5432
+              name: tcp-postgres
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: data
+              subPath: postgres
+  volumeClaimTemplates:
+    - metadata:
+        labels:
+          app: postgres
+          app.kubernetes.io/component: db
+          app.kubernetes.io/name: postgres
+          app.kubernetes.io/part-of: midlake
+          app.kubernetes.io/version: m1
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 2Gi

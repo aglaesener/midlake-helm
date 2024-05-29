@@ -1,0 +1,81 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    acme.cert-manager.io/http01-edit-in-place: "true"
+    kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: 0m
+  labels:
+    app.kubernetes.io/part-of: midlake
+    app.kubernetes.io/version: m1
+  name: midlake-ingress
+  namespace: {{ .Release.namespace }}
+spec:
+  rules:
+    - host: {{ .Values.hostname }}
+      http:
+        paths:
+          - backend:
+              service:
+                name: registry-api
+                port:
+                  number: 8080
+            path: /registry-api
+            pathType: Prefix
+          - backend:
+              service:
+                name: application
+                port:
+                  number: 8080
+            path: /application
+            pathType: Prefix
+          - backend:
+              service:
+                name: central
+                port:
+                  number: 8080
+            path: /central
+            pathType: Prefix
+          - backend:
+              service:
+                name: mock-extractor
+                port:
+                  number: 8080
+            path: /mock-extractor
+            pathType: Prefix
+          - backend:
+              service:
+                name: keycloak
+                port:
+                  number: 8080
+            path: /
+            pathType: Prefix
+          - backend:
+              service:
+                name: keycloak-vue-demo
+                port:
+                  number: 80
+            path: /keycloak-vue-demo
+            pathType: Prefix
+{{- if .Values.mockAcquire.deploy }}
+          - path: /mock-acquire
+            pathType: Prefix
+            backend:
+              service:
+                name: mock-acquire-api
+                port:
+                  number: 5005
+{{- end }}
+{{- if .Values.decipher.deploy }}
+          - path: /decipher
+            pathType: Prefix
+            backend:
+              service:
+                name: decipher
+                port:
+                  number: 8080
+{{- end }}
+  tls:
+    - hosts:
+        - {{ .Values.hostname }}
+      secretName: midlake-certificate-tls

@@ -1,0 +1,61 @@
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  labels:
+    app: orientdb
+    app.kubernetes.io/component: db
+    app.kubernetes.io/name: orientdb
+    app.kubernetes.io/part-of: midlake
+    app.kubernetes.io/version: m1
+  name: orientdb
+  namespace: {{ .Release.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: orientdb
+      app.kubernetes.io/component: db
+      app.kubernetes.io/name: orientdb
+      app.kubernetes.io/part-of: midlake
+      app.kubernetes.io/version: m1
+  serviceName: orientdb
+  template:
+    metadata:
+      labels:
+        app: orientdb
+        app.kubernetes.io/component: db
+        app.kubernetes.io/name: orientdb
+        app.kubernetes.io/part-of: midlake
+        app.kubernetes.io/version: m1
+    spec:
+      containers:
+        - envFrom:
+            - configMapRef:
+                name: orientdb-config
+          image: tgi-docker-registry.openshift.techgap.it/orientdb:3.0.22
+          name: orientdb
+          ports:
+            - containerPort: 2424
+              name: tcp-db
+            - containerPort: 2480
+              name: http-management
+          volumeMounts:
+            - mountPath: /orientdb/databases
+              name: data
+      imagePullSecrets:
+        - name: deploy-token
+  volumeClaimTemplates:
+    - metadata:
+        labels:
+          app: orientdb
+          app.kubernetes.io/component: db
+          app.kubernetes.io/name: orientdb
+          app.kubernetes.io/part-of: midlake
+          app.kubernetes.io/version: m1
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 8Gi

@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: midlake-fe-deployment
+  labels:
+    app: midlake-fe
+spec:
+  selector:
+    matchLabels:
+      app: midlake-fe
+  template:
+    metadata:
+      labels:
+        app: midlake-fe
+    spec:
+      containers:
+      - name: midlake-fe
+        image: midlake-front-end:{{ .Values.frontEnd.image.tag }}
+        imagePullPolicy: {{ .Values.frontEnd.image.pullPolicy }}
+        ports:
+        - containerPort: 80

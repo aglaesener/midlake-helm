@@ -1,0 +1,31 @@
+{{- if .Values.mockAcquire.deploy }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: mock-acquire-db
+    namespace: {{ .Release.namespace }}
+    labels:
+        app: mock-acquire-db
+spec:
+    selector:
+        matchLabels:
+            app: mock-acquire-db
+    template:
+        metadata:
+            labels:
+                app: mock-acquire-db
+        spec:
+            containers:
+                - name: mock-acquire-db
+                  image: andreaglaesener/mock-acquire-db:{{ .Values.mockAcquire.db.image.tag }}
+                  imagePullPolicy: {{ .Values.mockAcquire.db.image.pullPolicy }}
+                  ports:
+                      - containerPort: 5432
+                  volumeMounts:
+                      - name: pgdata
+                        mountPath: /var/lib/postgresql/data
+            volumes:
+                - name: pgdata
+                  persistentVolumeClaim:
+                      claimName: pgdata-pvc
+{{- end }}

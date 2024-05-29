@@ -1,0 +1,39 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    acme.cert-manager.io/http01-edit-in-place: "true"
+    kubernetes.io/ingress.class: public
+    kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: 0m
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+  creationTimestamp: "2022-02-03T09:09:04Z"
+  generation: 1
+  labels:
+    app.kubernetes.io/part-of: midlake
+    app.kubernetes.io/version: m1
+  name: midlake-fe-ingress-2
+  namespace: {{ .Release.namespace }}
+  resourceVersion: "11572688"
+  selfLink: /apis/networking.k8s.io/v1/namespaces/{{ .Release.namespace }}/ingresses/midlake-fe-ingress-2
+  uid: b4cd01e1-6961-4f6a-97d3-a669e7f110ae
+spec:
+  rules:
+  - host: {{ .Values.hostname }}
+    http:
+      paths:
+      - backend:
+          service:
+            name: midlake-fe-service
+            port:
+              number: 80
+        path: /app(/|$)(.*)
+        pathType: Prefix
+  tls:
+  - hosts:
+    - {{ .Values.hostname }}
+    secretName: midlake-certificate-2-tls
+status:
+  loadBalancer:
+    ingress:
+    - ip: 127.0.0.1

@@ -1,0 +1,71 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  labels:
+    app: application
+    app.kubernetes.io/component: application
+    app.kubernetes.io/name: application
+    app.kubernetes.io/part-of: midlake
+    app.kubernetes.io/version: m1
+  name: application
+  namespace: {{ .Release.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: application
+      app.kubernetes.io/component: application
+      app.kubernetes.io/name: application
+      app.kubernetes.io/part-of: midlake
+      app.kubernetes.io/version: m1
+  template:
+    metadata:
+      labels:
+        app: application
+        app.kubernetes.io/component: application
+        app.kubernetes.io/name: application
+        app.kubernetes.io/part-of: midlake
+        app.kubernetes.io/version: m1
+    spec:
+      containers:
+        - envFrom:
+            - configMapRef:
+                name: application-config
+          image: tgi-docker-registry.openshift.techgap.it/tech-gap-italia/midlake-aibibank/midlake-application:{{ .Values.application.image.tag }}
+          imagePullPolicy: {{ .Values.application.image.pullPolicy }}
+          name: application
+          ports:
+            - containerPort: 8080
+              name: http
+          volumeMounts:
+            - mountPath: /config
+              name: spring-config
+              readOnly: true
+            - mountPath: /midlake/logs
+              name: logs
+            - mountPath: /usr/lib/softhsm
+              name: softhsm
+            - mountPath: /home/techgap
+              name: techgap
+      hostAliases:
+        - hostnames:
+            - {{ .Values.hostname }}
+          ip: {{ .Values.hostIp }}
+      imagePullSecrets:
+        - name: deploy-token
+      volumes:
+        - name: spring-config
+          secret:
+            secretName: application-spring-config
+        - hostPath:
+            path: /midlake/logs
+            type: DirectoryOrCreate
+          name: logs
+        - hostPath:
+            path: /usr/lib/softhsm
+            type: Directory
+          name: softhsm
+        - hostPath:
+            path: /home/techgap
+            type: Directory
+          name: techgap

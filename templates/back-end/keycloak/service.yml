@@ -1,0 +1,23 @@
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: keycloak
+    app.kubernetes.io/component: keycloak
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/part-of: midlake
+    app.kubernetes.io/version: m1
+  name: keycloak
+  namespace: {{ .Release.namespace }}
+spec:
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+  selector:
+    app: keycloak
+    app.kubernetes.io/component: keycloak
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/part-of: midlake
+    app.kubernetes.io/version: m1
+  type: ClusterIP

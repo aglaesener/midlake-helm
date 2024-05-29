@@ -1,0 +1,31 @@
+{{- if .Values.mockAcquire.deploy }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: mock-acquire-api
+    namespace: {{ .Release.namespace }}
+    labels:
+        app: mock-acquire-api
+spec:
+    selector:
+        matchLabels:
+            app: mock-acquire-api
+    template:
+        metadata:
+            labels:
+                app: mock-acquire-api
+        spec:
+            initContainers:
+                - name: init-api
+                  image: busybox
+                  command: ['sh', '-c', "echo 'Waiting for DB...' && sleep 5"]
+            containers:
+                - name: mock-acquire-api
+                  image: andreaglaesener/mock-acquire-api:{{ .Values.mockAcquire.api.image.tag }}
+                  imagePullPolicy: {{ .Values.mockAcquire.api.image.pullPolicy }}
+                  ports:
+                      - containerPort: 5005
+                  env:
+                      - name: PORT
+                        value: '5005'
+{{- end }}
